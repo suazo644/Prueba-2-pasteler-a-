@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dulce Gestión — Pastelería</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500;600&display=swap');
+
+  :root {
+    --rose:      #e8b4b8;
+    --rose-deep: #c97b8a;
+    --blush:     #f5e6e8;
+    --cream:     #fdf8f5;
+    --warm:      #f0e4da;
+    --taupe:     #b89fa4;
+    --espresso:  #4a3540;
+    --gold:      #c9a96e;
+    --success:   #8ab5a0;
+    --error:     #d4756b;
+    --shadow:    0 4px 24px rgba(74,53,64,.10);
+    --shadow-lg: 0 12px 48px rgba(74,53,64,.16);
+    --radius:    18px;
+    --radius-sm: 10px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', 'Helvetica Neue', Arial, sans-serif;
+    background: #fdf8f5;
+    color: #4a3540;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  header {
+    background: linear-gradient(135deg, #4a3540 0%, #6b4a57 100%);
+    color: #fff;
+    padding: 20px 24px 16px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 12px 48px rgba(74,53,64,.16);
+  }
+  .header-inner { max-width: 640px; margin: 0 auto; }
+  .brand { display: flex; align-items: center; gap: 12px; margin-bottom: 18px; }
+  .brand-icon { font-size: 28px; }
+  .brand-text h1 {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: 22px; font-weight: 600; letter-spacing: .5px; color: #fff;
+  }
+  .brand-text p { font-size: 11px; opacity: .65; letter-spacing: 1.2px; text-transform: uppercase; color: #fff; }
+
+  nav { display: flex; gap: 6px; }
+  .nav-btn {
+    flex: 1; border: none; cursor: pointer;
+    padding: 10px 4px; border-radius: 12px;
+    font-family: 'DM Sans', 'Helvetica Neue', Arial, sans-serif;
+    font-size: 12px; font-weight: 500; letter-spacing: .4px;
+    transition: all .25s ease;
+    background: rgba(255,255,255,.10); color: rgba(255,255,255,.70);
+    display: flex; flex-direction: column; align-items: center; gap: 4px;
+  }
+  .nav-btn .nav-icon { font-size: 18px; }
+  .nav-btn.active { background: rgba(255,255,255,.22); color: #fff; box-shadow: 0 2px 12px rgba(0,0,0,.2); }
+  .nav-btn:hover:not(.active) { background: rgba(255,255,255,.15); color: #fff; }
+
+  main { max-width: 640px; margin: 0 auto; padding: 24px 16px 100px; }
+
+  .section { display: none; }
+  .section.active { display: block; animation: fadeUp .35s ease; }
+  @keyframes fadeUp { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
+
+  .section-title { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 28px; font-weight: 600; color: #4a3540; margin-bottom: 6px; }
+  .section-sub { font-size: 13px; color: #b89fa4; margin-bottom: 24px; }
+  .section-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 20px; }
+
+  .card { background: #ffffff; border-radius: 18px; padding: 22px; box-shadow: 0 4px 24px rgba(74,53,64,.10); margin-bottom: 16px; }
+
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+  .form-row.full { grid-template-columns: 1fr; }
+  .form-group { display: flex; flex-direction: column; gap: 6px; }
+  label { font-size: 11px; font-weight: 600; letter-spacing: .8px; text-transform: uppercase; color: #b89fa4; }
+
+  input, select, textarea {
+    border: 1.5px solid #f0e4da; border-radius: 10px; padding: 12px 14px;
+    font-family: 'DM Sans', 'Helvetica Neue', Arial, sans-serif;
+    font-size: 14px; color: #4a3540; background: #fdf8f5;
+    transition: border-color .2s, box-shadow .2s; width: 100%;
+    -webkit-appearance: none; appearance: none;
+  }
+  input:focus, select:focus, textarea:focus {
+    outline: none; border-color: #c97b8a;
+    box-shadow: 0 0 0 3px rgba(201,123,138,.15); background: #fff;
+  }
+  input[readonly] { background: #f0e4da; color: #b89fa4; cursor: default; }
+  textarea { resize: vertical; min-height: 72px; }
+  select {
+    cursor: pointer; background-color: #fdf8f5; padding-right: 36px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23b89fa4' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right 14px center;
+  }
+
+  .total-pill {
+    background: linear-gradient(135deg, #4a3540, #6b4a57);
+    color: #fff; border-radius: 10px; padding: 14px 18px; margin: 8px 0 16px;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .total-pill .lbl { font-size: 12px; opacity: .75; color: #fff; }
+  .total-pill .amount { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 26px; font-weight: 600; color: #fff; }
+
+  .btn {
+    border: none; cursor: pointer; border-radius: 10px; padding: 15px 20px;
+    font-family: 'DM Sans', 'Helvetica Neue', Arial, sans-serif;
+    font-size: 15px; font-weight: 600; width: 100%; transition: all .2s ease; letter-spacing: .3px;
+  }
+  .btn-primary {
+    background: linear-gradient(135deg, #c97b8a, #a85d70);
+    color: #fff; box-shadow: 0 4px 16px rgba(201,123,138,.4);
+  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(201,123,138,.5); }
+  .btn-primary:active { transform: translateY(0); }
+
+  #toast {
+    position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%) translateY(20px);
+    background: #4a3540; color: #fff; padding: 14px 22px; border-radius: 50px;
+    font-size: 14px; font-weight: 500; opacity: 0; transition: all .35s ease;
+    z-index: 9999; white-space: nowrap; max-width: 90vw;
+    box-shadow: 0 12px 48px rgba(74,53,64,.16); pointer-events: none;
+    display: flex; align-items: center; gap: 10px;
+  }
+  #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  #toast.success .ticon { color: #a8e6cf; }
+  #toast.error   .ticon { color: #f4a8a0; }
+
+  .spinner {
+    width: 18px; height: 18px; border: 2px solid rgba(255,255,255,.3);
+    border-top-color: #fff; border-radius: 50%; animation: spin .7s linear infinite;
+    display: inline-block; vertical-align: middle;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+  .stat-card { background: #ffffff; border-radius: 18px; padding: 20px; box-shadow: 0 4px 24px rgba(74,53,64,.10); text-align: center; }
+  .stat-card.full { grid-column: 1 / -1; }
+  .stat-icon { font-size: 28px; margin-bottom: 6px; }
+  .stat-lbl { font-size: 11px; text-transform: uppercase; letter-spacing: .8px; color: #b89fa4; font-weight: 600; margin-bottom: 6px; }
+  .stat-val { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 26px; font-weight: 600; }
+  .stat-card.income .stat-val { color: #8ab5a0; }
+  .stat-card.expense .stat-val { color: #d4756b; }
+  .stat-card.profit { background: linear-gradient(135deg, #4a3540, #6b4a57); }
+  .stat-card.profit .stat-lbl { color: rgba(255,255,255,.7); }
+  .stat-card.profit .stat-val { color: #f5e6e8; }
+
+  .history-list { display: flex; flex-direction: column; gap: 10px; }
+  .history-item {
+    background: #fdf8f5; border-radius: 10px; padding: 14px 16px;
+    display: flex; justify-content: space-between; align-items: center;
+    border-left: 3px solid #e8b4b8;
+  }
+  .history-item.gasto { border-left-color: #d4756b; }
+  .hi-info { flex: 1; }
+  .hi-title { font-weight: 600; font-size: 13px; color: #4a3540; }
+  .hi-meta { font-size: 11px; color: #b89fa4; margin-top: 2px; }
+  .hi-amt { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 20px; font-weight: 600; white-space: nowrap; margin-left: 10px; }
+  .hi-amt.income  { color: #8ab5a0; }
+  .hi-amt.expense { color: #d4756b; }
+
+  .badge { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; }
+  .badge-pagado    { background: #d4f0e4; color: #4a9b6e; }
+  .badge-pendiente { background: #fde8c8; color: #c47a28; }
+
+  .refresh-btn {
+    background: #f5e6e8; border: none; border-radius: 10px; padding: 10px 16px;
+    font-family: 'DM Sans', 'Helvetica Neue', Arial, sans-serif;
+    font-size: 13px; font-weight: 600; color: #c97b8a;
+    cursor: pointer; display: flex; align-items: center; gap: 8px; transition: background .2s;
+  }
+  .refresh-btn:hover { background: #e8b4b8; color: #fff; }
+
+  @media (max-width: 380px) {
+    .form-row { grid-template-columns: 1fr; }
+    .stat-grid { grid-template-columns: 1fr; }
+    .stat-card.full { grid-column: auto; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="brand">
+      <span class="brand-icon">🍰</span>
+      <div class="brand-text">
+        <h1>Dulce Gestión</h1>
+        <p>Panel de administración · Pastelería</p>
+      </div>
+    </div>
+    <nav>
+      <button class="nav-btn active" onclick="showSection('pedidos')" id="nav-pedidos">
+        <span class="nav-icon">🎂</span> Pedidos
+      </button>
+      <button class="nav-btn" onclick="showSection('gastos')" id="nav-gastos">
+        <span class="nav-icon">🧾</span> Gastos
+      </button>
+      <button class="nav-btn" onclick="showSection('resumen')" id="nav-resumen">
+        <span class="nav-icon">📊</span> Resumen
+      </button>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+  <!-- PEDIDOS -->
+  <section class="section active" id="sec-pedidos">
+    <div class="section-header">
+      <div>
+        <h2 class="section-title">Nuevo Pedido</h2>
+        <p class="section-sub">Registra un pedido de tu cliente</p>
+      </div>
+    </div>
+    <div class="card">
+      <div class="form-row">
+        <div class="form-group">
+          <label># Pedido</label>
+          <input type="text" id="p_numero" readonly placeholder="Auto">
+        </div>
+        <div class="form-group">
+          <label>Fecha Pedido</label>
+          <input type="date" id="p_fecha_pedido">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Fecha Entrega</label>
+          <input type="date" id="p_fecha_entrega">
+        </div>
+        <div class="form-group">
+          <label>Cliente</label>
+          <input type="text" id="p_cliente" placeholder="Nombre del cliente">
+        </div>
+      </div>
+      <div class="form-row full">
+        <div class="form-group">
+          <label>Producto</label>
+          <select id="p_producto">
+            <option value="">— Selecciona un producto —</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Cantidad</label>
+          <input type="number" id="p_cantidad" min="1" value="1" oninput="calcTotal()">
+        </div>
+        <div class="form-group">
+          <label>Descuento (Lps.)</label>
+          <input type="number" id="p_descuento" min="0" value="0" oninput="calcTotal()">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Método de Pago</label>
+          <select id="p_pago">
+            <option>Efectivo</option>
+            <option>Transferencia</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Estado</label>
+          <select id="p_estado">
+            <option>Pendiente</option>
+            <option>Pagado</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row full">
+        <div class="form-group">
+          <label>Notas</label>
+          <textarea id="p_notas" placeholder="Decoración, alergias, instrucciones especiales…"></textarea>
+        </div>
+      </div>
+    </div>
+    <div class="total-pill">
+      <span class="lbl">Total del pedido (Lps.)</span>
+      <span class="amount" id="p_total">Lps. 0.00</span>
+    </div>
+    <button class="btn btn-primary" id="btn-pedido" onclick="enviarPedido()">✨ Guardar Pedido</button>
+  </section>
+
+  <!-- GASTOS -->
+  <section class="section" id="sec-gastos">
+    <div class="section-header">
+      <div>
+        <h2 class="section-title">Nuevo Gasto</h2>
+        <p class="section-sub">Registra un gasto o costo</p>
+      </div>
+    </div>
+    <div class="card">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Fecha</label>
+          <input type="date" id="g_fecha">
+        </div>
+        <div class="form-group">
+          <label>Categoría</label>
+          <select id="g_categoria">
+            <option>Costos Directos</option>
+            <option>Costos Indirectos</option>
+            <option>Mano de Obra</option>
+            <option>Logística</option>
+            <option>Marketing</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row full">
+        <div class="form-group">
+          <label>Descripción</label>
+          <input type="text" id="g_descripcion" placeholder="Ej: Harina premium, empaque, etc.">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Método de Pago</label>
+          <select id="g_pago">
+            <option>Efectivo</option>
+            <option>Transferencia</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Cantidad</label>
+          <input type="number" id="g_cantidad" min="1" value="1" oninput="calcGasto()">
+        </div>
+      </div>
+      <div class="form-row full">
+        <div class="form-group">
+          <label>Costo Unitario (Lps.)</label>
+          <input type="number" id="g_costo_unitario" min="0" placeholder="0.00" oninput="calcGasto()">
+        </div>
+      </div>
+      <div class="form-row full">
+        <div class="form-group">
+          <label>Notas</label>
+          <textarea id="g_notas" placeholder="Proveedor, factura, observación…"></textarea>
+        </div>
+      </div>
+    </div>
+    <div class="total-pill">
+      <span class="lbl">Costo total (Lps.)</span>
+      <span class="amount" id="g_total">Lps. 0.00</span>
+    </div>
+    <button class="btn btn-primary" id="btn-gasto" onclick="enviarGasto()">💸 Guardar Gasto</button>
+  </section>
+
+  <!-- RESUMEN -->
+  <section class="section" id="sec-resumen">
+    <div class="section-header">
+      <div>
+        <h2 class="section-title">Resumen</h2>
+        <p class="section-sub">Vista general de tu negocio</p>
+      </div>
+      <button class="refresh-btn" onclick="cargarResumen()">🔄 Actualizar</button>
+    </div>
+    <div class="stat-grid">
+      <div class="stat-card income">
+        <div class="stat-icon">💰</div>
+        <div class="stat-lbl">Ingresos</div>
+        <div class="stat-val" id="r_ingresos">Lps. 0</div>
+      </div>
+      <div class="stat-card expense">
+        <div class="stat-icon">🧾</div>
+        <div class="stat-lbl">Gastos</div>
+        <div class="stat-val" id="r_gastos">Lps. 0</div>
+      </div>
+      <div class="stat-card profit full">
+        <div class="stat-icon">✨</div>
+        <div class="stat-lbl">Utilidad Neta</div>
+        <div class="stat-val" id="r_utilidad">Lps. 0</div>
+      </div>
+    </div>
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+        <strong style="font-size:14px;">Últimos Pedidos</strong>
+        <span id="badge-pedidos" style="font-size:12px;color:#b89fa4;">—</span>
+      </div>
+      <div class="history-list" id="lista-pedidos">
+        <p style="color:#b89fa4;font-size:13px;text-align:center;padding:20px 0;">Presiona "Actualizar" para cargar datos</p>
+      </div>
+    </div>
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+        <strong style="font-size:14px;">Últimos Gastos</strong>
+        <span id="badge-gastos" style="font-size:12px;color:#b89fa4;">—</span>
+      </div>
+      <div class="history-list" id="lista-gastos">
+        <p style="color:#b89fa4;font-size:13px;text-align:center;padding:20px 0;">Presiona "Actualizar" para cargar datos</p>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<div id="toast">
+  <span class="ticon" id="toast-icon">✓</span>
+  <span id="toast-msg"></span>
+</div>
+
+<script>
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby5BlnS122YJiPBILGfXMcE6l5T81ylGSqWgoIK_vlAMGpDWl2-qaQERfGnzI3UU4w/exec';
+let productos = [];
+
+window.addEventListener('DOMContentLoaded', () => {
+  setFechaHoy('p_fecha_pedido');
+  setFechaHoy('g_fecha');
+  generarNumeroPedido();
+  cargarProductos();
+  document.getElementById('p_producto').addEventListener('change', calcTotal);
+});
+
+function setFechaHoy(id) {
+  document.getElementById(id).value = new Date().toISOString().split('T')[0];
+}
+function generarNumeroPedido() {
+  document.getElementById('p_numero').value = 'PED-' + Date.now().toString().slice(-6);
+}
+function showSection(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('sec-' + id).classList.add('active');
+  document.getElementById('nav-' + id).classList.add('active');
+  if (id === 'resumen') cargarResumen();
+}
+async function callScript(payload) {
+  const form = new FormData();
+  form.append('data', JSON.stringify(payload));
+  await fetch(SCRIPT_URL, { method: 'POST', body: form, mode: 'no-cors' });
+  return { ok: true };
+}
+async function getScript(params) {
+  const url = new URL(SCRIPT_URL);
+  Object.entries(params).forEach(([k,v]) => url.searchParams.set(k,v));
+  const r = await fetch(url.toString());
+  return r.json();
+}
+async function cargarProductos() {
+  try {
+    const data = await getScript({ action: 'getProductos' });
+    if (data && data.productos && data.productos.length) {
+      productos = data.productos;
+      const sel = document.getElementById('p_producto');
+      sel.innerHTML = '<option value="">— Selecciona un producto —</option>';
+      productos.forEach(p => {
+        const opt = document.createElement('option');
+        opt.value = p.nombre; opt.dataset.precio = p.precio || 0;
+        opt.textContent = p.nombre + (p.precio ? ' — Lps. ' + Number(p.precio).toFixed(2) : '');
+        sel.appendChild(opt);
+      });
+    } else { cargarProductosMock(); }
+  } catch(e) { cargarProductosMock(); }
+}
+function cargarProductosMock() {
+  const mock = [{ nombre:'Cake pop', precio:0 }, { nombre:'Clásico de mantequilla', precio:0 }];
+  const sel = document.getElementById('p_producto');
+  sel.innerHTML = '<option value="">— Selecciona un producto —</option>';
+  mock.forEach(p => {
+    const opt = document.createElement('option');
+    opt.value = p.nombre; opt.dataset.precio = p.precio; opt.textContent = p.nombre;
+    sel.appendChild(opt);
+  });
+}
+function calcTotal() {
+  const sel = document.getElementById('p_producto');
+  const precio = parseFloat(sel.selectedOptions[0]?.dataset.precio || 0);
+  const cant   = parseFloat(document.getElementById('p_cantidad').value || 0);
+  const desc   = parseFloat(document.getElementById('p_descuento').value || 0);
+  const total  = Math.max(0, (precio * cant) - desc);
+  document.getElementById('p_total').textContent = 'Lps. ' + total.toFixed(2);
+  return total;
+}
+async function enviarPedido() {
+  const numero   = document.getElementById('p_numero').value;
+  const fecha_p  = document.getElementById('p_fecha_pedido').value;
+  const fecha_e  = document.getElementById('p_fecha_entrega').value;
+  const cliente  = document.getElementById('p_cliente').value.trim();
+  const producto = document.getElementById('p_producto').value;
+  const cantidad = document.getElementById('p_cantidad').value;
+  const descuento= document.getElementById('p_descuento').value;
+  const pago     = document.getElementById('p_pago').value;
+  const estado   = document.getElementById('p_estado').value;
+  const notas    = document.getElementById('p_notas').value;
+  const total    = calcTotal();
+  if (!cliente || !producto || !fecha_e) { showToast('Por favor completa: cliente, producto y fecha de entrega','error'); return; }
+  const btn = document.getElementById('btn-pedido');
+  setLoading(btn, true);
+  try {
+    await callScript({ action:'addPedido', numero, fecha_pedido:fecha_p, fecha_entrega:fecha_e, cliente, producto, cantidad, descuento, pago, estado, notas, total:total.toFixed(2) });
+    showToast('¡Pedido guardado con éxito! 🎉','success');
+    resetPedido();
+  } catch(e) { showToast('Error al guardar. Verifica tu conexión.','error'); }
+  finally { setLoading(btn, false); }
+}
+function resetPedido() {
+  document.getElementById('p_cliente').value = '';
+  document.getElementById('p_producto').value = '';
+  document.getElementById('p_cantidad').value = 1;
+  document.getElementById('p_descuento').value = 0;
+  document.getElementById('p_notas').value = '';
+  document.getElementById('p_estado').value = 'Pendiente';
+  document.getElementById('p_fecha_entrega').value = '';
+  calcTotal(); generarNumeroPedido();
+}
+function calcGasto() {
+  const cant = parseFloat(document.getElementById('g_cantidad').value || 0);
+  const cu   = parseFloat(document.getElementById('g_costo_unitario').value || 0);
+  const total = cant * cu;
+  document.getElementById('g_total').textContent = 'Lps. ' + total.toFixed(2);
+  return total;
+}
+async function enviarGasto() {
+  const fecha    = document.getElementById('g_fecha').value;
+  const categoria= document.getElementById('g_categoria').value;
+  const desc     = document.getElementById('g_descripcion').value.trim();
+  const pago     = document.getElementById('g_pago').value;
+  const cantidad = document.getElementById('g_cantidad').value;
+  const cu       = document.getElementById('g_costo_unitario').value;
+  const notas    = document.getElementById('g_notas').value;
+  const total    = calcGasto();
+  if (!desc || !cu) { showToast('Por favor completa: descripción y costo unitario','error'); return; }
+  const btn = document.getElementById('btn-gasto');
+  setLoading(btn, true);
+  try {
+    await callScript({ action:'addGasto', fecha, categoria, descripcion:desc, pago, cantidad, costo_unitario:cu, total:total.toFixed(2), notas });
+    showToast('¡Gasto registrado correctamente!','success');
+    resetGasto();
+  } catch(e) { showToast('Error al guardar. Verifica tu conexión.','error'); }
+  finally { setLoading(btn, false); }
+}
+function resetGasto() {
+  document.getElementById('g_descripcion').value = '';
+  document.getElementById('g_cantidad').value = 1;
+  document.getElementById('g_costo_unitario').value = '';
+  document.getElementById('g_notas').value = '';
+  calcGasto();
+}
+async function cargarResumen() {
+  try {
+    const data = await getScript({ action: 'getResumen' });
+    if (data) {
+      const ing = parseFloat(data.ingresos || 0);
+      const gas = parseFloat(data.gastos   || 0);
+      const uti = ing - gas;
+      document.getElementById('r_ingresos').textContent = 'Lps. ' + ing.toLocaleString('es-HN',{minimumFractionDigits:2,maximumFractionDigits:2});
+      document.getElementById('r_gastos').textContent   = 'Lps. ' + gas.toLocaleString('es-HN',{minimumFractionDigits:2,maximumFractionDigits:2});
+      document.getElementById('r_utilidad').textContent = 'Lps. ' + uti.toLocaleString('es-HN',{minimumFractionDigits:2,maximumFractionDigits:2});
+      if (data.pedidos)      renderPedidos(data.pedidos);
+      if (data.gastos_lista) renderGastos(data.gastos_lista);
+    } else { cargarResumenMock(); }
+  } catch(e) { cargarResumenMock(); }
+}
+function cargarResumenMock() {
+  document.getElementById('r_ingresos').textContent = 'Lps. 3,200.00';
+  document.getElementById('r_gastos').textContent   = 'Lps. 1,450.00';
+  document.getElementById('r_utilidad').textContent = 'Lps. 1,750.00';
+  renderPedidos([
+    { numero:'PED-001', cliente:'María López',  producto:'Cake pop',               total:'450.00', estado:'Pagado',    fecha_entrega:'2025-03-01' },
+    { numero:'PED-002', cliente:'Ana García',   producto:'Clásico de mantequilla', total:'180.00', estado:'Pendiente', fecha_entrega:'2025-03-03' },
+  ]);
+  renderGastos([
+    { fecha:'2025-02-28', categoria:'Costos Directos', descripcion:'Harina premium',      total:'320.00' },
+    { fecha:'2025-02-27', categoria:'Mano de Obra',    descripcion:'Ayudante decoración', total:'800.00' },
+  ]);
+}
+function renderPedidos(list) {
+  const el = document.getElementById('lista-pedidos');
+  document.getElementById('badge-pedidos').textContent = list.length + ' registros';
+  if (!list.length) { el.innerHTML = '<p style="color:#b89fa4;font-size:13px;text-align:center;padding:16px 0">Sin pedidos aún</p>'; return; }
+  el.innerHTML = list.slice(0,8).map(p => `
+    <div class="history-item">
+      <div class="hi-info">
+        <div class="hi-title">${p.cliente||'—'}</div>
+        <div class="hi-meta">${p.numero||''} · ${p.producto||''} · Entrega: ${p.fecha_entrega||'—'}</div>
+        <div style="margin-top:4px"><span class="badge ${p.estado==='Pagado'?'badge-pagado':'badge-pendiente'}">${p.estado||'Pendiente'}</span></div>
+      </div>
+      <div class="hi-amt income">Lps. ${Number(p.total||0).toFixed(2)}</div>
+    </div>`).join('');
+}
+function renderGastos(list) {
+  const el = document.getElementById('lista-gastos');
+  document.getElementById('badge-gastos').textContent = list.length + ' registros';
+  if (!list.length) { el.innerHTML = '<p style="color:#b89fa4;font-size:13px;text-align:center;padding:16px 0">Sin gastos aún</p>'; return; }
+  el.innerHTML = list.slice(0,8).map(g => `
+    <div class="history-item gasto">
+      <div class="hi-info">
+        <div class="hi-title">${g.descripcion||'—'}</div>
+        <div class="hi-meta">${g.categoria||''} · ${g.fecha||''}</div>
+      </div>
+      <div class="hi-amt expense">-Lps. ${Number(g.total||0).toFixed(2)}</div>
+    </div>`).join('');
+}
+function setLoading(btn, loading) {
+  if (loading) { btn.disabled=true; btn._orig=btn.innerHTML; btn.innerHTML='<span class="spinner"></span>'; }
+  else { btn.disabled=false; btn.innerHTML=btn._orig; }
+}
+let toastTimer;
+function showToast(msg, type='success') {
+  const toast = document.getElementById('toast');
+  document.getElementById('toast-icon').textContent = type==='success' ? '✓' : '✕';
+  document.getElementById('toast-msg').textContent  = msg;
+  toast.className = 'show ' + type;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toast.className = '', 3500);
+}
+</script>
+</body>
+</html>
